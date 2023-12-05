@@ -1,5 +1,4 @@
 import java.io.File
-import java.math.BigDecimal
 
 private data class Index(val y: Int, val x: Int)
 
