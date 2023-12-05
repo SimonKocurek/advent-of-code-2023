@@ -1,6 +1,4 @@
 import java.io.File
-import java.math.BigDecimal
-import java.util.ArrayDeque
 import kotlin.math.min
 
 fun main(args: Array<String>) {

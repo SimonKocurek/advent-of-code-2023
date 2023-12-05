@@ -1,5 +1,4 @@
 import java.io.File
-import java.math.BigDecimal
 
 fun main(args: Array<String>) {
     File("src/main/resources/input").readLines().sumOf { line ->
