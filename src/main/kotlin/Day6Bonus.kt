@@ -11,6 +11,6 @@ fun main(args: Array<String>) {
         }
 
     LongRange(1, time).count { waited ->
-        (time - waited) * waited > distance
+        (time - waited) * waited > distance // Modern CPUs are fast!
     }.also { println(it) }
 }
