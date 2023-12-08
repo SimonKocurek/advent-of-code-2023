@@ -2,7 +2,22 @@ import java.io.File
 import java.util.function.Predicate
 
 fun main(args: Array<String>) {
-    val cardStrengths = listOf('A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2')
+    val cardStrengths = listOf('A', 'K', 'Q', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'J')
+
+    fun generatePossible(cards: CharArray, idx: Int): Sequence<String> = sequence {
+        if (idx == 5) {
+            yield(cards.concatToString())
+            return@sequence
+        }
+        if (cards[idx] != 'J') {
+            yieldAll(generatePossible(cards, idx + 1))
+            return@sequence
+        }
+        cardStrengths.forEach {
+            cards[idx] = it
+            yieldAll(generatePossible(cards, idx + 1))
+        }
+    }
 
     val hasHandOfLevel = listOf<Predicate<List<Int>>>(
         Predicate { frequencies -> frequencies.any { it == 5 } }, // Five of a kind
@@ -21,8 +36,10 @@ fun main(args: Array<String>) {
             Pair(cards, bid.toLong())
         }
         .map { (cards, bid) ->
-            val cardFrequencies = cards.groupBy { it }.values.map { it.size }
-            val handLevel = hasHandOfLevel.indexOfFirst { it.test(cardFrequencies) }
+            val handLevel = generatePossible(cards.toCharArray(), 0)
+                .map { generatedCards -> generatedCards.groupBy { it }.values.map { it.size } }
+                .map { cardFrequencies -> hasHandOfLevel.indexOfFirst { it.test(cardFrequencies) } }
+                .min()
 
             val strengths = cards.map { cardStrengths.indexOf(it) }
 
@@ -35,7 +52,7 @@ fun main(args: Array<String>) {
                     cardStrength2.compareTo(cardStrength1).takeIf { it != 0 }
                 }
         }
-        .mapIndexed { playerRank, (_, _, bid) ->  bid * (playerRank + 1) }
+        .mapIndexed { playerRank, (_, _, bid) -> bid * (playerRank + 1) }
         .sum()
         .also { println(it) }
 }
